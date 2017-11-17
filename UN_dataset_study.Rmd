@@ -1,0 +1,208 @@
+---
+title: "United Nations dataset study - Regression Course"
+output: html_notebook
+---
+
+Description
+
+Let's first load the different packages needed for this exercice
+```{r}
+library(alr4)
+library(dplyr)
+library(ggplot2)
+```
+
+Loading and getting the structure of the data 
+
+```{r}
+DB <- alr4::UN11
+str(DB)
+#View(DB)
+head(DB)
+```
+
+The data UN11 (library(arl4)) contains several variables, including ppgdp, the gross
+national product per person in US. dollars, and fertility, the birth rate per 1000 females, both from the year 2009. The data are for 1991ocalities, mostly UN member countries, but also other areas such as Hong Kong that are not independent countries. The data were collected from United Nations (2011). We will study the dependence of fertility on ppgdp.
+
+Then, the predictor is fertility and the response is the ppgdp. 
+
+First, let's Draw the scatterplot of fertility versus ppgdp : 
+
+```{r}
+
+p <- ggplot(data=DB, aes(x= fertility, y= ppgdp)) + 
+  geom_point(size=1) + geom_smooth(method=lm) + ggtitle(" ppgdp versus fertility ")
+
+p
+
+```
+
+We notice that a straight line mean function is not a plausible for a summary of this graph. 
+
+Let's now draw the scatterplot of log(fertility) versus log(ppgdp)  : 
+
+```{r}
+
+p <- ggplot(data=DB, aes(x= log(fertility), y= log(ppgdp))) + 
+  geom_point(size=1) + geom_smooth(method=lm) + ggtitle(" log(ppgdp) versus log(fertility) ")
+
+p
+
+```
+
+Now we see that a simple linear regression model is plausible for a summary of this graph. 
+
+```{r}
+#  Linear Regression 
+fit <- lm(log(ppgdp) ~ log(fertility), data=DB)
+
+f<-function(x,a){
+  return(a[2]*x+a[1])
+}
+
+
+p <- ggplot(data=DB, aes(x= log(fertility) ) ) + geom_line(aes(y = f(log(fertility),fit$coefficients), colour = "estimated ggdp")) + geom_point(aes(y=log(ppgdp), colour = "ggdp"))
+  
+p
+
+
+
+```
+
+```{r}
+
+RSS <-sum(residuals(fit)^2)
+RSS
+Var <- sum( (log(DB$ppgdp) - mean(log(DB$ppgdp)))**2)
+
+fraction <- 1 - RSS/Var
+fraction
+
+```
+
+```{r}
+
+DB %>% View()
+
+
+```
+
+Bosnia and Herzegovina has the lowest fertility
+Niger has the highiest fertility
+
+```{r}
+
+
+head(sort(residuals(fit)),2)
+tail(sort(residuals(fit)),2)
+
+```
+```{r}
+
+p <- ggplot(data=DB, aes(x= lifeExpF, y= log(ppgdp))) + 
+  geom_point(size=1) + geom_smooth(method=lm) + ggtitle(" lifeExpF versus log(ppgdp) ")
+
+p
+
+```
+
+
+```{r}
+#  Linear Regression 
+fit2 <- lm(lifeExpF~log(ppgdp), data=DB)
+
+f<-function(x,a){
+  return(a[2]*x+a[1])
+}
+
+
+p <- ggplot(data=DB, aes(x= log(ppgdp) ) ) + geom_line(aes(y = f(log(ppgdp),fit2$coefficients), colour = "estimated ggdp")) + geom_point(aes(y=lifeExpF, colour = "lifeExpF"))
+  
+p
+
+
+
+```
+
+```{r}
+
+RSS <-sum(residuals(fit2)^2)
+RSS
+Var <- sum( (DB$lifeExpF- mean(DB$lifeExpF))**2)
+
+fraction <- 1 - RSS/Var
+fraction
+
+```
+
+```{r}
+
+p <- ggplot(data=DB, aes(x= lifeExpF, y= log(fertility))) + 
+  geom_point(size=1) + geom_smooth(method=lm) + ggtitle(" lifeExpF versus log(fertility) ")
+
+p
+
+```
+
+```{r}
+#  Linear Regression 
+fit3 <- lm(lifeExpF~log(fertility), data=DB)
+
+f<-function(x,a){
+  return(a[2]*x+a[1])
+}
+
+
+p <- ggplot(data=DB, aes(x= log(fertility) ) ) + geom_line(aes(y = f(log(fertility),fit3$coefficients), colour = "estimated ggdp")) + geom_point(aes(y=lifeExpF, colour = "lifeExpF"))
+  
+p
+
+
+
+```
+
+```{r}
+
+RSS <-sum(residuals(fit3)^2)
+RSS
+Var <- sum( (DB$lifeExpF- mean(DB$lifeExpF))**2)
+
+fraction <- 1 - RSS/Var
+fraction
+
+
+```
+
+```{r}
+
+p <- ggplot(data=DB, aes(x= fertility, y= log(ppgdp))) + 
+  geom_point(size=1) + geom_smooth(method=lm) + ggtitle(" lifeExpF versus log(fertility) ")
+
+p
+
+```
+
+```{r}
+#  Linear Regression 
+fit4 <- lm(log(ppgdp) ~ fertility, data=DB)
+
+f<-function(x,a){
+  return(a[2]*x+a[1])
+}
+
+
+p <- ggplot(data=DB, aes(x= log(fertility) ) ) + geom_line(aes(y = f(log(fertility),fit$coefficients), colour = "estimated ggdp")) + geom_point(aes(y=log(ppgdp), colour = "ggdp"))
+  
+p
+
+
+
+```
+
+```{r}
+
+#plot(fit2$residuals, fit4$residuals)
+
+```
+
+
