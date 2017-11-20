@@ -12,7 +12,7 @@ library(dplyr)
 library(ggplot2)
 ```
 
-Loading and getting the structure of the data 
+Loading and getting the structure of the data : 
 
 ```{r}
 DB <- alr4::UN11
@@ -53,15 +53,16 @@ p
 Now we see that a simple linear regression model is plausible for a summary of this graph. 
 
 ```{r}
-#  Linear Regression 
-fit <- lm(log(ppgdp) ~ log(fertility), data=DB)
+#  Linear Regression : log(ppgdp) ~ log(fertility)
+
+fit_loggdp_logfertility <- lm(log(ppgdp) ~ log(fertility), data=DB)
 
 f<-function(x,a){
   return(a[2]*x+a[1])
 }
 
 
-p <- ggplot(data=DB, aes(x= log(fertility) ) ) + geom_line(aes(y = f(log(fertility),fit$coefficients), colour = "estimated ggdp")) + geom_point(aes(y=log(ppgdp), colour = "ggdp"))
+p <- ggplot(data=DB, aes(x= log(fertility) ) )  + geom_point(aes(y=log(ppgdp), colour = "ggdp")) + geom_line(aes(y = f(log(fertility),fit_loggdp_logfertility$coefficients), colour = "estimated ggdp")) 
   
 p
 
@@ -71,19 +72,19 @@ p
 
 ```{r}
 
-RSS <-sum(residuals(fit)^2)
-RSS
-Var <- sum( (log(DB$ppgdp) - mean(log(DB$ppgdp)))**2)
+RSS_loggdp_logfertility <-sum(residuals(fit_loggdp_logfertility)^2)
+RSS_loggdp_logfertility
+Var_loggdp_logfertility <- sum( (log(DB$ppgdp) - mean(log(DB$ppgdp)))**2)
 
-fraction <- 1 - RSS/Var
-fraction
+fraction_loggdp_logfertility <- 1 - RSS_loggdp_logfertility/Var_loggdp_logfertility
+fraction_loggdp_logfertility
 
 ```
 
+
+
 ```{r}
-
 DB %>% View()
-
 
 ```
 
@@ -93,8 +94,8 @@ Niger has the highiest fertility
 ```{r}
 
 
-head(sort(residuals(fit)),2)
-tail(sort(residuals(fit)),2)
+head(sort(residuals(fit_loggdp_logfertility)),2)
+tail(sort(residuals(fit_loggdp_logfertility)),2)
 
 ```
 ```{r}
@@ -109,14 +110,14 @@ p
 
 ```{r}
 #  Linear Regression 
-fit2 <- lm(lifeExpF~log(ppgdp), data=DB)
+fit_lifeExpF_loggdp <- lm(lifeExpF~log(ppgdp), data=DB)
 
 f<-function(x,a){
   return(a[2]*x+a[1])
 }
 
 
-p <- ggplot(data=DB, aes(x= log(ppgdp) ) ) + geom_line(aes(y = f(log(ppgdp),fit2$coefficients), colour = "estimated ggdp")) + geom_point(aes(y=lifeExpF, colour = "lifeExpF"))
+p <- ggplot(data=DB, aes(x= log(ppgdp) ) ) + geom_point(aes(y=lifeExpF, colour = "lifeExpF")) + geom_line(aes(y = f(log(ppgdp),fit_lifeExpF_loggdp$coefficients), colour = "estimated ggdp")) 
   
 p
 
@@ -126,9 +127,9 @@ p
 
 ```{r}
 
-RSS <-sum(residuals(fit2)^2)
+RSS <-sum(residuals(fit_lifeExpF_loggdp)^2)
 RSS
-Var <- sum( (DB$lifeExpF- mean(DB$lifeExpF))**2)
+Var <- sum((DB$lifeExpF- mean(DB$lifeExpF))**2)
 
 fraction <- 1 - RSS/Var
 fraction
@@ -146,14 +147,14 @@ p
 
 ```{r}
 #  Linear Regression 
-fit3 <- lm(lifeExpF~log(fertility), data=DB)
+fit_lifeExpF_logfertility<- lm(lifeExpF~log(fertility), data=DB)
 
 f<-function(x,a){
   return(a[2]*x+a[1])
 }
 
 
-p <- ggplot(data=DB, aes(x= log(fertility) ) ) + geom_line(aes(y = f(log(fertility),fit3$coefficients), colour = "estimated ggdp")) + geom_point(aes(y=lifeExpF, colour = "lifeExpF"))
+p <- ggplot(data=DB, aes(x= log(fertility) ) ) +geom_point(aes(y=lifeExpF, colour = "lifeExpF"))  + geom_line(aes(y = f(log(fertility),fit_lifeExpF_logfertility$coefficients), colour = "estimated ggdp"))
   
 p
 
@@ -163,19 +164,19 @@ p
 
 ```{r}
 
-RSS <-sum(residuals(fit3)^2)
-RSS
-Var <- sum( (DB$lifeExpF- mean(DB$lifeExpF))**2)
+RSS_fit_lifeExpF_logfertility <-sum(residuals(fit_lifeExpF_logfertility)^2)
+RSS_fit_lifeExpF_logfertility
+Var_fit_lifeExpF_logfertility <- sum( (DB$lifeExpF- mean(DB$lifeExpF))**2)
 
-fraction <- 1 - RSS/Var
-fraction
+fraction_fit_lifeExpF_logfertility <- 1 - RSS_fit_lifeExpF_logfertility/Var_fit_lifeExpF_logfertility
+fraction_fit_lifeExpF_logfertility
 
 
 ```
 
 ```{r}
 
-p <- ggplot(data=DB, aes(x= fertility, y= log(ppgdp))) + 
+p <- ggplot(data=DB, aes(x= log(ppgdp), y= fertility)) + 
   geom_point(size=1) + geom_smooth(method=lm) + ggtitle(" lifeExpF versus log(fertility) ")
 
 p
@@ -184,14 +185,14 @@ p
 
 ```{r}
 #  Linear Regression 
-fit4 <- lm(log(ppgdp) ~ fertility, data=DB)
+fit_fertility_loggdp <- lm( fertility ~ log(ppgdp) , data=DB)
 
 f<-function(x,a){
   return(a[2]*x+a[1])
 }
 
 
-p <- ggplot(data=DB, aes(x= log(fertility) ) ) + geom_line(aes(y = f(log(fertility),fit$coefficients), colour = "estimated ggdp")) + geom_point(aes(y=log(ppgdp), colour = "ggdp"))
+p <- ggplot(data=DB, aes(x= log(fertility) ) ) + geom_line(aes(y = f(log(fertility),fit_fertility_loggdp$coefficients), colour = "estimated ggdp")) + geom_point(aes(y=fertility, colour = "ggdp"))
   
 p
 
@@ -201,8 +202,33 @@ p
 
 ```{r}
 
-#plot(fit2$residuals, fit4$residuals)
+
+plot(fit_lifeExpF_loggdp$residuals, fit_fertility_loggdp$residuals )
 
 ```
 
+```{r}
+fit_residuals <- lm( fit_lifeExpF_loggdp$residuals ~ fit_fertility_loggdp$residuals , data=DB)
 
+p <- ggplot(data=DB, aes(x= fit_fertility_loggdp$residuals ) ) + geom_line(aes(y = f(fit_fertility_loggdp$residuals,fit_residuals$coefficients), colour = "estimated ggdp")) + geom_point(aes(y=fit_lifeExpF_loggdp$residuals, colour = "ggdp"))
+  
+p
+
+```
+
+```{r}
+#  Linear Regression 
+fit_final<- lm(lifeExpF~fertility +, data=DB)
+
+f<-function(x,a){
+  return(a[2]*x+a[1])
+}
+
+
+p <- ggplot(data=DB, aes(x= log(fertility) ) ) +geom_point(aes(y=lifeExpF, colour = "lifeExpF"))  + geom_line(aes(y = f(log(fertility),fit_lifeExpF_logfertility$coefficients), colour = "estimated ggdp"))
+  
+p
+
+
+
+```
